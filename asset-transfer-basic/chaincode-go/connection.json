@@ -1,0 +1,5 @@
+{
+  "address": "peer0.org1.atgdigitals.com:9999",
+  "dial_timeout": "10s",
+  "tls_required": false
+}

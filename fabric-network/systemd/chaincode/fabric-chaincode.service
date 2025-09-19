@@ -1,0 +1,13 @@
+[Unit]
+Description=Fabric Chaincode Service
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=$PWD/env/fabric-chaincode.conf
+ExecStart=/bin/bash -c "$PWD/bin_chaincode/chaincode -peer.address=$CORE_PEER_ADDRESS"
+WorkingDirectory=$PWD
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

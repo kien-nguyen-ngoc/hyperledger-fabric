@@ -1,0 +1,12 @@
+[Unit]
+Description=Fabric Chaincode Gateway Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c "$PWD/bin_chaincode/assetTransfer"
+WorkingDirectory=$PWD/application-gateway-go
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
