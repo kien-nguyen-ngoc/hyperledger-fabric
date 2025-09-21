@@ -13,9 +13,9 @@ ssh $USERNAME@peer0.org3.atgdigitals.com "sudo rm -rf $WORKING_DIR/hyperledger &
 scp -r $WORKING_DIR/hyperledger/fabric-network $USERNAME@peer0.org3.atgdigitals.com:$WORKING_DIR/hyperledger
 
 # Setup environment
-runAsRoot       ./00.setup.sh
-ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./00.setup.sh"
-ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./00.setup.sh"
+runAsRoot       ./00.setup.sh 1
+ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./00.setup.sh 2"
+ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./00.setup.sh 3"
 
 # Initialize TLS CA servers
 runAsRoot       ./02.start_tls_ca_server.sh stop
