@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. utils.sh
+
 CHAINCODE_ID=$1
 ORG=$2
 
@@ -10,4 +12,4 @@ sed -i "s|{{ORG}}|$ORG|" $PWD/env/fabric-chaincode.conf
 
 chmod +x $PWD/bin/chaincode/chaincode
 
-sudo bash -c "systemctl restart fabric-chaincode.service"
+runAsRoot systemctl restart fabric-chaincode.service

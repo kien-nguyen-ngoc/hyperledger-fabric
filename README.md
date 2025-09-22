@@ -1,25 +1,27 @@
+## Requirements:
+ssh
+sudo
+jq
+tar
 
+## Installation
+```shell
 ./init-all.sh <username> <root-dir>
-./init-all.sh sysadmin /home/hyperledger
+```
+e.g., ./init-all.sh sysadmin /home/hyperledger
 
-Deploy hyperledger trên 2 node, gồm 1 orderer + 2 peer
-    Server 1: 
-        Roles: orderer, peer 1
-        Services: 
-            fabric-ordering.service
-            fabric-peer-org1.service
-            fabric-gateway.service
-            fabric-chaincode.service
-    Server 2: 
-        Roles: peer 2
-        Service: 
-            fabric-peer-org2.service
+## Backup
+At peer X
+```shell
+./00.backup.sh <X> <username>
+```
+e.g., ./00.backup.sh 1 sysadmin 
 
-Storage:
-    TLS certificates:
-        organizations
-    Blockchain data:
-        channel-artifacts
-        chain-data
-    Node configurations:
-        config
+## Restore
+At working peer
+```shell
+./00.restore.sh <org> <username> <package>
+```
+e.g., ./00.restore.sh 3 sysadmin restores/20250922-093426-svr1.tar.gz
+
+

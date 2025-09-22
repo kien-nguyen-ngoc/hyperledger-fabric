@@ -12,7 +12,7 @@ function run_peer() {
     local MODE=$2
 
     if [ "$MODE" == 'status' ]; then
-        systemctl status fabric-peer-$ORG.service
+        runAsRoot systemctl status fabric-peer-$ORG.service
         return 0
     fi
 
@@ -26,7 +26,7 @@ function run_peer() {
     sed -i "s|file: tls/ca.crt|file: $PWD/organizations/peerOrganizations/$ORG.atgdigitals.com/peers/peer0.$ORG.atgdigitals.com/tls/ca.crt|g" $PWD/config/$ORG/core.yaml
     sed -i "s|        - tls/ca.crt|        - $PWD/organizations/peerOrganizations/$ORG.atgdigitals.com/peers/peer0.$ORG.atgdigitals.com/tls/ca.crt|g" $PWD/config/$ORG/core.yaml
 
-    systemctl $MODE fabric-peer-$ORG.service
+    runAsRoot systemctl $MODE fabric-peer-$ORG.service
 }
 
 function run_ordering() {
@@ -35,7 +35,7 @@ function run_ordering() {
     local MODE=$2
 
     if [ "$MODE" == 'status' ]; then
-        systemctl status fabric-ordering${ORG}.service
+        runAsRoot systemctl status fabric-ordering${ORG}.service
         return 0
     fi
     
@@ -51,7 +51,7 @@ function run_ordering() {
     sed -i "s|ListenAddress: 127.0.0.1:9443|ListenAddress: 0.0.0.0:9443|g" $PWD/config/ordererOrg$ORG/orderer.yaml
     sed -i "s|ListenAddress: 127.0.0.1|ListenAddress: 0.0.0.0|g" $PWD/config/ordererOrg$ORG/orderer.yaml
         
-    systemctl $MODE fabric-ordering${ORG}.service
+    runAsRoot systemctl $MODE fabric-ordering${ORG}.service
 }
 
 if [[ $ORG == *"org"* ]]; then 

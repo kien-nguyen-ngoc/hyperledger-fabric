@@ -13,32 +13,32 @@ ssh $USERNAME@peer0.org3.atgdigitals.com "sudo rm -rf $WORKING_DIR/hyperledger &
 scp -r $WORKING_DIR/hyperledger/fabric-network $USERNAME@peer0.org3.atgdigitals.com:$WORKING_DIR/hyperledger
 
 # Setup environment
-runAsRoot       ./00.setup.sh 1
+./00.setup.sh 1
 ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./00.setup.sh 2"
 ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./00.setup.sh 3"
 
 # Initialize TLS CA servers
-runAsRoot       ./02.start_tls_ca_server.sh stop
-runAsRoot       ./04.start_peer_and_ordering.sh stop org1
+./02.start_tls_ca_server.sh stop
+./04.start_peer_and_ordering.sh stop org1
 ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo ./04.start_peer_and_ordering.sh stop org2"
 ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo ./04.start_peer_and_ordering.sh stop org3"
-runAsRoot       ./04.start_peer_and_ordering.sh stop orderer1
+./04.start_peer_and_ordering.sh stop orderer1
 ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo ./04.start_peer_and_ordering.sh stop orderer2"
 ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo ./04.start_peer_and_ordering.sh stop orderer3"
 sudo            ./00.cleanup.sh
 ./01.init_tls_ca_server.sh all
-runAsRoot       ./02.start_tls_ca_server.sh start
+./02.start_tls_ca_server.sh start
 ./03.enroll_servers.sh
-runAsRoot       ./02.start_tls_ca_server.sh stop
+./02.start_tls_ca_server.sh stop
 # Copy files to peer0.org2 and peer0.org3
 scp -r ./organizations $USERNAME@peer0.org2.atgdigitals.com:$WORKING_DIR/hyperledger/fabric-network
 scp -r ./organizations $USERNAME@peer0.org3.atgdigitals.com:$WORKING_DIR/hyperledger/fabric-network
 
 # Start all servers
-runAsRoot       ./04.start_peer_and_ordering.sh start org1 
+./04.start_peer_and_ordering.sh start org1 
 ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./04.start_peer_and_ordering.sh start org2"
 ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./04.start_peer_and_ordering.sh start org3"
-runAsRoot       ./04.start_peer_and_ordering.sh start orderer1 
+./04.start_peer_and_ordering.sh start orderer1 
 ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./04.start_peer_and_ordering.sh start orderer2"
 ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./04.start_peer_and_ordering.sh start orderer3"
 
@@ -60,6 +60,8 @@ mv ./organizations/ordererOrganizations/org3.atgdigitals.com/orderers/orderer3.a
 # Create channel and deploy chaincode
 ./05.create_channel.sh
 ./06.deploy_chaincode.sh ../asset-transfer-basic/chaincode-go peer0.org1.atgdigitals.com peer0.org2.atgdigitals.com peer0.org3.atgdigitals.com $USERNAME $WORKING_DIR
+scp -r $WORKING_DIR/hyperledger/fabric-network/{channel-artifacts,packagedChaincode} $USERNAME@peer0.org2.atgdigitals.com:$WORKING_DIR/hyperledger/fabric-network
+scp -r $WORKING_DIR/hyperledger/fabric-network/{channel-artifacts,packagedChaincode} $USERNAME@peer0.org3.atgdigitals.com:$WORKING_DIR/hyperledger/fabric-network
 
 # Start api service
 ./07.start_gateway.sh

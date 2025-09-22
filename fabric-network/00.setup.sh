@@ -25,7 +25,8 @@ sudo bash -c "systemctl enable fabric-ordering$ORG.service"
 sudo bash -c "systemctl enable fabric-peer-org$ORG.service"
 sudo bash -c "systemctl enable fabric-chaincode.service"
 
-chmod +x $PWD/bin/*
-chmod +x $PWD/builders/*
+chmod +x -R $PWD/bin/*
+chmod +x -R $PWD/builders/*
+chmod +x -R $PWD/*.sh
 
 { set +x; } 2>/dev/null

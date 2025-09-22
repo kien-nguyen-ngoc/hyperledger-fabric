@@ -80,6 +80,13 @@ function parsePeerConnectionParameters() {
   done
 }
 
+function checkHealth() {
+  ORG=$1
+  export FABRIC_CFG_PATH=$PWD/config/org$ORG
+  export CORE_PEER_ADDRESS=peer0.org$ORG.atgdigitals.com:7051
+  ${PWD}/bin/fabric/peer channel getinfo -c default-channel
+}
+
 export CORE_PEER_TLS_ENABLED=true
 export FABRIC_LOGGING_SPEC=debug:cauthdsl,policies,msp,grpc,peer.gossip.mcs,gossip,leveldbhelper=info
 
@@ -91,5 +98,3 @@ export -f verifyResult
 export -f runAsNonRoot
 export -f runAsRoot
 export -f parsePeerConnectionParameters
-
-export PATH=$PATH:/mnt/go-1.23.0/bin

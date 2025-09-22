@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. utils.sh
+
 chmod +x $PWD/bin/chaincode/assetTransfer
 
-sudo bash -c "systemctl restart fabric-gateway.service"
+runAsRoot systemctl restart fabric-gateway.service
