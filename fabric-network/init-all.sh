@@ -64,4 +64,4 @@ scp -r $WORKING_DIR/hyperledger/fabric-network/{channel-artifacts,packagedChainc
 scp -r $WORKING_DIR/hyperledger/fabric-network/{channel-artifacts,packagedChaincode} $USERNAME@peer0.org3.atgdigitals.com:$WORKING_DIR/hyperledger/fabric-network
 
 # Start api service
-./07.start_gateway.sh
+./07.start_gateway.sh remote $USERNAME

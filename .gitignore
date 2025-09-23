@@ -1,0 +1,4 @@
+asset-transfer-basic/application-gateway-dotnet/**/bin
+asset-transfer-basic/application-gateway-dotnet/**/obj
+asset-transfer-basic/application-gateway-dotnet/**/.vs
+asset-transfer-basic/application-gateway-dotnet/Gateway/Resources/*
