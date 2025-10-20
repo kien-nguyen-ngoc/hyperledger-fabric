@@ -124,12 +124,25 @@ enrollOrg() {
 
 
 enrollOrder ordererOrg1  orderer1.atgdigitals.com 5054
-enrollOrder ordererOrg2  orderer2.atgdigitals.com 6054
-enrollOrder ordererOrg3  orderer3.atgdigitals.com 7054
 enrollOrg   org1        peer0.org1.atgdigitals.com 8054
+
+enrollOrder ordererOrg2  orderer2.atgdigitals.com 6054
 enrollOrg   org2        peer0.org2.atgdigitals.com 9054
+
+enrollOrder ordererOrg3  orderer3.atgdigitals.com 7054
 enrollOrg   org3        peer0.org3.atgdigitals.com 10054
 
-sleep 3
+mv ./organizations/peerOrganizations/org2.atgdigitals.com/users/Admin@org2.atgdigitals.com/msp/cacerts/peer0-org1-atgdigitals-com-9054.pem ./organizations/peerOrganizations/org2.atgdigitals.com/users/Admin@org2.atgdigitals.com/msp/cacerts/peer0-org2-atgdigitals-com-9054.pem
+mv ./organizations/peerOrganizations/org3.atgdigitals.com/users/Admin@org3.atgdigitals.com/msp/cacerts/peer0-org1-atgdigitals-com-10054.pem ./organizations/peerOrganizations/org3.atgdigitals.com/users/Admin@org3.atgdigitals.com/msp/cacerts/peer0-org3-atgdigitals-com-10054.pem
+
+mv ./organizations/ordererOrganizations/org2.atgdigitals.com/msp/cacerts/orderer1-atgdigitals-com-6054.pem ./organizations/ordererOrganizations/org2.atgdigitals.com/msp/cacerts/orderer2-atgdigitals-com-6054.pem
+mv ./organizations/ordererOrganizations/org3.atgdigitals.com/msp/cacerts/orderer1-atgdigitals-com-7054.pem ./organizations/ordererOrganizations/org3.atgdigitals.com/msp/cacerts/orderer3-atgdigitals-com-7054.pem
+
+mv ./organizations/ordererOrganizations/org2.atgdigitals.com/orderers/orderer2.atgdigitals.com/msp/cacerts/orderer1-atgdigitals-com-6054.pem ./organizations/ordererOrganizations/org2.atgdigitals.com/orderers/orderer2.atgdigitals.com/msp/cacerts/orderer3-atgdigitals-com-6054.pem
+mv ./organizations/ordererOrganizations/org3.atgdigitals.com/orderers/orderer3.atgdigitals.com/msp/cacerts/orderer1-atgdigitals-com-7054.pem ./organizations/ordererOrganizations/org3.atgdigitals.com/orderers/orderer3.atgdigitals.com/msp/cacerts/orderer3-atgdigitals-com-7054.pem
+
+mv ./organizations/ordererOrganizations/org2.atgdigitals.com/orderers/orderer2.atgdigitals.com/tls/tlscacerts/tls-orderer1-atgdigitals-com-6054.pem ./organizations/ordererOrganizations/org2.atgdigitals.com/orderers/orderer2.atgdigitals.com/tls/tlscacerts/tls-orderer2-atgdigitals-com-6054.pem
+mv ./organizations/ordererOrganizations/org3.atgdigitals.com/orderers/orderer3.atgdigitals.com/tls/tlscacerts/tls-orderer1-atgdigitals-com-7054.pem ./organizations/ordererOrganizations/org3.atgdigitals.com/orderers/orderer3.atgdigitals.com/tls/tlscacerts/tls-orderer3-atgdigitals-com-7054.pem
+
 
 { set +x; } 2>/dev/null

@@ -2,8 +2,6 @@
 
 . utils.sh
 
-set -x
-
 PEER1_HOST=$2
 PEER2_HOST=$3
 PEER3_HOST=$4
@@ -322,9 +320,9 @@ resolveSequence
 queryInstalled 1
 
 ## Start external chaincode server
-./05.start_chaincode_server.sh $PACKAGE_ID 1
-ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./05.start_chaincode_server.sh $PACKAGE_ID 2"
-ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./05.start_chaincode_server.sh $PACKAGE_ID 3"
+./06.1.start_chaincode_service.sh $PACKAGE_ID 1
+ssh $USERNAME@peer0.org2.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./06.1.start_chaincode_service.sh $PACKAGE_ID 2"
+ssh $USERNAME@peer0.org3.atgdigitals.com "cd $WORKING_DIR/hyperledger/fabric-network && sudo bash ./06.1.start_chaincode_service.sh $PACKAGE_ID 3"
 
 ## approve the definition for org1
 approveForMyOrg 1
@@ -359,5 +357,3 @@ if [ "$CC_INIT_FCN" = "NA" ]; then
 else
   chaincodeInvokeInit 1 2
 fi
-
-{ set +x; } 2>/dev/null

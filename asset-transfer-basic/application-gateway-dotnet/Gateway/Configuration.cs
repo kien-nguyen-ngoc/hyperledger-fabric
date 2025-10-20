@@ -1,4 +1,6 @@
-﻿namespace Gateway;
+﻿using HyperledgerSdk;
+
+namespace Gateway;
 
 public class Configuration
 {
@@ -13,21 +15,4 @@ public class Configuration
         .Build();
 
     public static readonly HyperledgerFabricConfiguration HyperledgerFabric = _appSettings.GetSection("HyperledgerFabric").Get<HyperledgerFabricConfiguration>();
-}
-
-public class HyperledgerFabricConfiguration
-{
-    public string ChannelName { get; set; }
-    public string ChaincodeName { get; set; }
-    public IEnumerable<HyperledgerFabricPeer> Peers { get; set; }
-}
-
-public class HyperledgerFabricPeer
-{
-    public string MspId { get; set; }
-    public string CertPath { get; set; }
-    public string KeyPath { get; set; }
-    public string TlsCertPath { get; set; }
-    public string Endpoint { get; set; }
-    public string HostOverride { get; set; }
 }

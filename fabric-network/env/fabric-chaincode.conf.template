@@ -1,10 +1,10 @@
 CHAINCODE_ID={{CHAINCODE_ID}}
 CORE_CHAINCODE_ID_NAME=chaincode-go-1-0
 CHAINCODE_SERVER_ADDRESS=0.0.0.0:9999
-CORE_TLS_CLIENT_CERT_FILE="{{PWD}}/organizations/peerOrganizations/org1.atgdigitals.com/peers/peer0.org1.atgdigitals.com/tls/server.crt"
-CORE_TLS_CLIENT_KEY_PATH="{{PWD}}/organizations/peerOrganizations/org1.atgdigitals.com/peers/peer0.org1.atgdigitals.com/tls/server.key"
-CORE_PEER_TLS_ROOTCERT_FILE="{{PWD}}/organizations/peerOrganizations/org1.atgdigitals.com/peers/peer0.org1.atgdigitals.com/tls/ca.crt"
-CORE_PEER_MSPCONFIGPATH="{{PWD}}/organizations/peerOrganizations/org1.atgdigitals.com/users/Admin@org1.atgdigitals.com/msp"
+CORE_TLS_CLIENT_CERT_FILE="{{PWD}}/organizations/peerOrganizations/org{{ORG}}.atgdigitals.com/peers/peer0.org{{ORG}}.atgdigitals.com/tls/server.crt"
+CORE_TLS_CLIENT_KEY_PATH="{{PWD}}/organizations/peerOrganizations/org{{ORG}}.atgdigitals.com/peers/peer0.org{{ORG}}.atgdigitals.com/tls/server.key"
+CORE_PEER_TLS_ROOTCERT_FILE="{{PWD}}/organizations/peerOrganizations/org{{ORG}}.atgdigitals.com/peers/peer0.org{{ORG}}.atgdigitals.com/tls/ca.crt"
+CORE_PEER_MSPCONFIGPATH="{{PWD}}/organizations/peerOrganizations/org{{ORG}}.atgdigitals.com/users/Admin@org{{ORG}}.atgdigitals.com/msp"
 CORE_PEER_TLS_ENABLED=true
 CORE_PEER_LOCALMSPID="Org{{ORG}}MSP"
 CORE_PEER_ADDRESS=peer0.org{{ORG}}.atgdigitals.com:7051

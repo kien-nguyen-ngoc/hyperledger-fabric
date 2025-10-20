@@ -1,5 +1,4 @@
-using Gateway.Commands;
-using Gateway.Utils;
+using Gateway.Bussiness;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gateway.Controllers
@@ -16,11 +15,10 @@ namespace Gateway.Controllers
         }
 
         [HttpGet]
-        public async Task<string> Get()
+        public async Task<IEnumerable<AccountResponse>> Get()
         {
-            string s = await HyperledgerCommander.Receive("", new GetAllAccountsCommand());
-            _logger.LogInformation(s);
-            return s;
+            return await HyperledgerBusiness.GetAccounts("");
+            
         }
     }
 }

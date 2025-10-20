@@ -80,11 +80,37 @@ function parsePeerConnectionParameters() {
   done
 }
 
-function checkHealth() {
-  ORG=$1
+function servicesManagement() {
+  MODE=$1
+  ORG=$2
+  runAsRoot systemctl $MODE fabric-chaincode.service
+  runAsRoot systemctl $MODE fabric-peer-org$ORG.service
+  runAsRoot systemctl $MODE fabric-ordering$ORG.service
+  sleep 3
+}
+
+function healthCheck() {
+  ORG=${1:-1}
   export FABRIC_CFG_PATH=$PWD/config/org$ORG
-  export CORE_PEER_ADDRESS=peer0.org$ORG.atgdigitals.com:7051
-  ${PWD}/bin/fabric/peer channel getinfo -c default-channel
+  export CA_FILE="$PWD/organizations/ordererOrganizations/org$ORG.atgdigitals.com/tlsca/tlsca.org$ORG.atgdigitals.com-cert.pem"
+  export CORE_TLS_CLIENT_CERT_FILE="$PWD/organizations/peerOrganizations/org$ORG.atgdigitals.com/peers/peer0.org$ORG.atgdigitals.com/tls/server.crt"
+  export CORE_TLS_CLIENT_KEY_PATH="$PWD/organizations/peerOrganizations/org$ORG.atgdigitals.com/peers/peer0.org$ORG.atgdigitals.com/tls/server.key"
+  export CORE_PEER_TLS_ROOTCERT_FILE="$PWD/organizations/peerOrganizations/org$ORG.atgdigitals.com/peers/peer0.org$ORG.atgdigitals.com/tls/ca.crt"
+  export CORE_PEER_MSPCONFIGPATH="$PWD/organizations/peerOrganizations/org$ORG.atgdigitals.com/users/Admin@org$ORG.atgdigitals.com/msp"
+  export CORE_PEER_TLS_ENABLED="true"
+  export CORE_PEER_LOCALMSPID="Org${ORG}MSP"
+  export CORE_PEER_ADDRESS="peer0.org$ORG.atgdigitals.com:7051"
+
+  ./bin/fabric/peer lifecycle chaincode querycommitted --channelID default-channel
+  ./bin/fabric/peer chaincode invoke \
+                  -C default-channel \
+                  -n chaincode-go-1-0 \
+                  -o orderer${ORG}.atgdigitals.com:7050 \
+                  --peerAddresses $CORE_PEER_ADDRESS \
+                  --tlsRootCertFiles $CORE_PEER_TLS_ROOTCERT_FILE \
+                  --tls \
+                  --cafile $CA_FILE \
+                  -c '{"Args":["GetAllAccounts"]}'
 }
 
 export CORE_PEER_TLS_ENABLED=true
@@ -98,3 +124,4 @@ export -f verifyResult
 export -f runAsNonRoot
 export -f runAsRoot
 export -f parsePeerConnectionParameters
+export -f servicesManagement

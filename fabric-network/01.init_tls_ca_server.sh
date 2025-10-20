@@ -32,6 +32,9 @@ function init() {
     $FABRIC_HOME/bin/fabric-ca-server init -b "$ADMIN_USER":"$ADMIN_PWD" -n $CSR_HOST
     sed -i "s/port: 7054/port: $PUBLIC_PORT/g" fabric-ca-server-config.yaml
     sed -i "s/listenAddress: 127.0.0.1:9443/listenAddress: 0.0.0.0:$OPS_PORT/g" fabric-ca-server-config.yaml
+    sed -i "s|expiry: 43800h|expiry: 438000h|g" fabric-ca-server-config.yaml
+    sed -i "s|expiry: 8760h|expiry: 438000h|g" fabric-ca-server-config.yaml
+    sed -i "s|expiry: 131400h|expiry: 438000h|g" fabric-ca-server-config.yaml
 }
 
 
@@ -51,10 +54,12 @@ elif [ "${DELPOY,,}" = "org3" ]; then
     init org3 10054 12443
 elif [ "${DELPOY,,}" = "all" ]; then
     init ordererOrg1 5054 7443
-    init ordererOrg2 6054 8443
-    init ordererOrg3 7054 9443
     init org1 8054 10443
+
+    init ordererOrg2 6054 8443
     init org2 9054 11443
+
+    init ordererOrg3 7054 9443
     init org3 10054 12443
 fi
 

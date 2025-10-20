@@ -1,5 +1,5 @@
-using Gateway.Commands;
-using Gateway.Utils;
+using Gateway.Bussiness;
+using HyperledgerSdk;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gateway.Controllers
@@ -16,9 +16,9 @@ namespace Gateway.Controllers
         }
 
         [HttpPost]
-        public async Task Post(string id)
+        public async Task<HFTransactionResponse> Post(string id)
         {
-            await HyperledgerCommander.Send("", new CreateAccountCommand { Id = id});
+            return await HyperledgerBusiness.CreateAccount("", id);
         }
     }
 }

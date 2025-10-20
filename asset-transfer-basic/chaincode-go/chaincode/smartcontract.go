@@ -18,8 +18,8 @@ type SmartContract struct {
 
 // Account defines the structure of an account
 type Account struct {
-	AccountID string  `json:"AccountID"`
-	Balance   float64 `json:"balance"`
+	AccountID string  `json:"AccountId"`
+	Balance   float64 `json:"Balance"`
 }
 
 var accountLocks sync.Map
@@ -54,22 +54,23 @@ func isConcurrencyError(err error) bool {
 	return err != nil && strings.Contains(err.Error(), "concurrent transaction")
 }
 
-func (s *SmartContract) CreateAccount(ctx contractapi.TransactionContextInterface, accountID string) error {
+func (s *SmartContract) CreateAccount(ctx contractapi.TransactionContextInterface, accountID string) (*Account, error) {
 	existingAccount, err := ctx.GetStub().GetState(accountID)
 	if err != nil {
-		return fmt.Errorf("failed to read from world state: %v", err)
+		return nil, fmt.Errorf("failed to read from world state: %v", err)
 	}
 	if existingAccount != nil {
-		return fmt.Errorf("account %s already exists", accountID)
+		return nil, fmt.Errorf("account %s already exists", accountID)
 	}
 
 	account := Account{AccountID: accountID, Balance: 0}
 	accountJSON, err := json.Marshal(account)
 	if err != nil {
-		return fmt.Errorf("failed to marshal account JSON: %v", err)
+		return nil, fmt.Errorf("failed to marshal account JSON: %v", err)
 	}
 	// Sử dụng putStateWithRetry để giảm khả năng lỗi MVCC
-	return putStateWithRetry(ctx, accountID, accountJSON)
+	err = putStateWithRetry(ctx, accountID, accountJSON)
+	return &account, err
 }
 
 func (s *SmartContract) ReadAccount(ctx contractapi.TransactionContextInterface, accountID string) (*Account, error) {
@@ -85,12 +86,12 @@ func (s *SmartContract) ReadAccount(ctx contractapi.TransactionContextInterface,
 	if err := json.Unmarshal(accountData, &account); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal account %s: %v", accountID, err)
 	}
-	return &account, nil
+	return &account, err
 }
 
-func (s *SmartContract) AddBalance(ctx contractapi.TransactionContextInterface, accountID string, amount float64) error {
+func (s *SmartContract) AddBalance(ctx contractapi.TransactionContextInterface, accountID string, amount float64) (*Account, error) {
 	if amount <= 0 {
-		return fmt.Errorf("amount must be greater than zero")
+		return nil, fmt.Errorf("amount must be greater than zero")
 	}
 
 	// 🔒 Lấy khóa tài khoản trước khi đọc dữ liệu
@@ -101,7 +102,7 @@ func (s *SmartContract) AddBalance(ctx contractapi.TransactionContextInterface, 
 	// Đọc tài khoản từ world state
 	account, err := s.ReadAccount(ctx, accountID)
 	if err != nil && !strings.Contains(err.Error(), "does not exist") {
-		return err
+		return nil, err
 	}
 
 	// Nếu tài khoản chưa tồn tại, tạo mới
@@ -115,14 +116,15 @@ func (s *SmartContract) AddBalance(ctx contractapi.TransactionContextInterface, 
 	// 🔄 Ghi trạng thái mới vào world state
 	accountJSON, err := json.Marshal(account)
 	if err != nil {
-		return fmt.Errorf("failed to marshal updated account JSON: %v", err)
+		return nil, fmt.Errorf("failed to marshal updated account JSON: %v", err)
 	}
-	return putStateWithRetry(ctx, accountID, accountJSON)
+	err = putStateWithRetry(ctx, accountID, accountJSON)
+	return account, err
 }
 
-func (s *SmartContract) DeductBalance(ctx contractapi.TransactionContextInterface, accountID string, amount float64) error {
+func (s *SmartContract) DeductBalance(ctx contractapi.TransactionContextInterface, accountID string, amount float64) (*Account, error) {
 	if amount <= 0 {
-		return fmt.Errorf("amount must be greater than zero")
+		return nil, fmt.Errorf("amount must be greater than zero")
 	}
 
 	lock := getLock(accountID)
@@ -131,26 +133,27 @@ func (s *SmartContract) DeductBalance(ctx contractapi.TransactionContextInterfac
 
 	account, err := s.ReadAccount(ctx, accountID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if account.Balance < amount {
-		return fmt.Errorf("insufficient balance")
+		return nil, fmt.Errorf("insufficient balance")
 	}
 
 	account.Balance -= amount
 	accountJSON, err := json.Marshal(account)
 	if err != nil {
-		return fmt.Errorf("failed to marshal updated account JSON: %v", err)
+		return nil, fmt.Errorf("failed to marshal updated account JSON: %v", err)
 	}
-	return putStateWithRetry(ctx, accountID, accountJSON)
+	err = putStateWithRetry(ctx, accountID, accountJSON)
+	return account, err
 }
 
-func (s *SmartContract) Transfer(ctx contractapi.TransactionContextInterface, fromID, toID string, amount float64) error {
+func (s *SmartContract) Transfer(ctx contractapi.TransactionContextInterface, fromID, toID string, amount float64) ([]*Account, error) {
 	if amount <= 0 {
-		return fmt.Errorf("transfer amount must be greater than zero")
+		return nil, fmt.Errorf("transfer amount must be greater than zero")
 	}
 	if fromID == toID {
-		return fmt.Errorf("cannot transfer to the same account")
+		return nil, fmt.Errorf("cannot transfer to the same account")
 	}
 
 	// 🔒 Lấy khóa tài khoản nguồn trước
@@ -161,10 +164,10 @@ func (s *SmartContract) Transfer(ctx contractapi.TransactionContextInterface, fr
 	// 📥 Đọc tài khoản nguồn
 	fromAccount, err := s.ReadAccount(ctx, fromID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if fromAccount.Balance < amount {
-		return fmt.Errorf("insufficient balance in %s", fromID)
+		return nil, fmt.Errorf("insufficient balance in %s", fromID)
 	}
 
 	// 🔒 Lấy khóa tài khoản đích chỉ khi cần
@@ -187,13 +190,12 @@ func (s *SmartContract) Transfer(ctx contractapi.TransactionContextInterface, fr
 	toJSON, _ := json.Marshal(toAccount)
 
 	if err := putStateWithRetry(ctx, fromID, fromJSON); err != nil {
-		return fmt.Errorf("failed to update sender account: %v", err)
+		return nil, fmt.Errorf("failed to update sender account: %v", err)
 	}
 	if err := putStateWithRetry(ctx, toID, toJSON); err != nil {
-		return fmt.Errorf("failed to update recipient account: %v", err)
+		return nil, fmt.Errorf("failed to update recipient account: %v", err)
 	}
-
-	return nil
+	return []*Account{fromAccount, toAccount}, err
 }
 
 func (s *SmartContract) GetAllAccounts(ctx contractapi.TransactionContextInterface) ([]*Account, error) {
@@ -216,6 +218,5 @@ func (s *SmartContract) GetAllAccounts(ctx contractapi.TransactionContextInterfa
 		}
 		accounts = append(accounts, &account)
 	}
-
-	return accounts, nil
+	return accounts, err
 }

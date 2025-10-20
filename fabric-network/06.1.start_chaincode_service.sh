@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. utils.sh
+
+CHAINCODE_ID=$1
+ORG=$2
+
+# Edit env file 
+sed "s|{{CHAINCODE_ID}}|$CHAINCODE_ID|g" $PWD/env/fabric-chaincode.conf.template > $PWD/env/fabric-chaincode.conf
+sed -i "s|{{PWD}}|$PWD|g" $PWD/env/fabric-chaincode.conf
+sed -i "s|{{ORG}}|$ORG|g" $PWD/env/fabric-chaincode.conf
+
+chmod +x $PWD/bin/chaincode/chaincode
+
+runAsRoot systemctl restart fabric-chaincode.service

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36429.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sdk", "Sdk\Sdk.csproj", "{9763FB16-5E96-41F4-B11B-F2185E7BAC5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyperledgerSdk", "HyperledgerSdk\HyperledgerSdk.csproj", "{9763FB16-5E96-41F4-B11B-F2185E7BAC5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway", "Gateway\Gateway.csproj", "{96C5C810-FB41-4BDF-B950-4C488F601895}"
 EndProject
